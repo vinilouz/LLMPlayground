@@ -20,6 +20,7 @@ const INITIAL_PROVIDER: Provider = {
   maxTokens: 2048,
   stream: true,
   model: "",
+  imageModel: "",
   isInitial: true,
 };
 
@@ -34,6 +35,7 @@ function loadState(): ProvidersState {
     temperature: oldConfig?.temperature ?? 0.7,
     maxTokens: oldConfig?.maxTokens ?? 2048,
     model: oldConfig?.model ?? "",
+    imageModel: oldConfig?.imageModel ?? "",
   };
 
   const state: ProvidersState = { providers: [initial], activeProviderId: "initial" };

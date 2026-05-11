@@ -6,9 +6,7 @@ import { BASE_URL, DEBUG } from "@/lib/config";
 const CONVERSATIONS_KEY = "conversations";
 const ACTIVE_CONV_KEY = "activeConversationId";
 
-const DEFAULT_CHAT_MODEL = "llama-4-scout";
-const DEFAULT_IMAGE_MODEL = "z-image";
-const DEFAULT_TEMPERATURE = 0.7;
+const DEFAULT_TEMPERATURE = 0.9;
 const DEFAULT_MAX_TOKENS = 2048;
 const MAX_TITLE_LENGTH = 30;
 const CHAT_ENDPOINT = "/chat/completions";
@@ -146,7 +144,8 @@ export function useConversations(options?: UseConversationsOptions) {
 
     try {
       const headers = buildAuthHeaders(config?.apiKey);
-      const model = config?.model ?? DEFAULT_CHAT_MODEL;
+      const model = config?.model;
+      if (!model) throw new Error("No model configured for the active provider.");
       const temperature = config?.temperature ?? DEFAULT_TEMPERATURE;
       const maxTokens = config?.maxTokens ?? DEFAULT_MAX_TOKENS;
       const stream = config?.stream ?? true;
@@ -236,7 +235,7 @@ export function useConversations(options?: UseConversationsOptions) {
     } finally {
       setIsStreaming(false);
     }
-  }, [options?.personas, options?.config, conversations]); // eslint-disable-line react-hooks/exhaustive-deps
+  }, [options?.personas, options?.config, conversations]);
 
   // ─── Public handlers ─────────────────────────────────────────────────────────
 
@@ -329,17 +328,17 @@ export function useConversations(options?: UseConversationsOptions) {
       const imageEndpoint = resolveApiUrl(options?.config).replace(CHAT_ENDPOINT, IMAGE_ENDPOINT);
       const headers = buildAuthHeaders(options?.config?.apiKey);
 
-      const imageBody = {
-        model: DEFAULT_IMAGE_MODEL,
+      const imageBody: Record<string, unknown> = {
         prompt: msg.content,
         n: 1,
         size: "1024x1024",
         response_format: "url",
-        aspectRatio: "16:9",
       };
+      const imageModel = options?.config?.imageModel;
+      if (imageModel) imageBody.model = imageModel;
 
       if (DEBUG) {
-        console.log(`[LLM] → POST ${imageEndpoint}\n[LLM]   model=${DEFAULT_IMAGE_MODEL} prompt="${msg.content.slice(0, 50)}"`);
+        console.log(`[LLM] → POST ${imageEndpoint}\n[LLM]   model=${imageModel ?? "(default)"} prompt="${msg.content.slice(0, 50)}"`);
       }
 
       const response = await fetch(imageEndpoint, {

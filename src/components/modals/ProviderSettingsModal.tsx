@@ -33,6 +33,7 @@ const DEFAULT_NEW_PROVIDER = {
   maxTokens: 2048,
   stream: true,
   model: "",
+  imageModel: "",
 };
 
 const MAX_TOKENS_LIMIT = 4096;
@@ -226,6 +227,16 @@ export function ProviderSettingsModal({
                   type="password"
                   value={selected.apiKey}
                   onChange={(e) => onUpdateProvider(selected.id, { apiKey: e.target.value })}
+                />
+              </div>
+
+              <div className="space-y-1">
+                <Label htmlFor="detail-imageModel" className="text-xs">Image Model <span className="text-muted-foreground font-normal">(optional)</span></Label>
+                <Input
+                  id="detail-imageModel"
+                  placeholder="e.g. dall-e-3"
+                  value={selected.imageModel ?? ""}
+                  onChange={(e) => onUpdateProvider(selected.id, { imageModel: e.target.value })}
                 />
               </div>
 

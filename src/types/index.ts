@@ -30,6 +30,7 @@ export interface ProviderConfig {
   maxTokens: number;
   stream: boolean;
   model: string;
+  imageModel?: string;
 }
 
 export interface Provider {
@@ -41,6 +42,7 @@ export interface Provider {
   maxTokens: number;
   stream: boolean;
   model: string;
+  imageModel?: string;
   isInitial: boolean;
 }
 
